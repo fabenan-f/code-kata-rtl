@@ -1,0 +1,31 @@
+services:
+  mongo_service:
+    image: mongodb/mongodb-community-server:6.0-ubi8
+    ports:
+      - 27017:27017
+    networks:
+      - shared-net
+  
+  mockcms:
+    build:
+      dockerfile: Dockerfile.mockcms
+    ports:
+      - 3333:3333
+    networks:
+      - shared-net
+    
+  app:
+    build:
+      dockerfile: Dockerfile
+    links:
+      - mongo_service
+      - mockcms
+    depends_on:
+      - mongo_service
+      - mockcms
+    networks:
+      - shared-net
+  
+networks:
+  shared-net:
+    driver: bridge
